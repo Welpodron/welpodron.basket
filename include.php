@@ -3,8 +3,9 @@
 use Bitrix\Main\Loader;
 
 CJSCore::RegisterExt('welpodron.basket', [
-    'js' => '/bitrix/js/welpodron.basket/script.js',
-    'skip_core' => true
+    'js' => '/local/packages/welpodron.basket/iife/basket/index.js',
+    'skip_core' => true,
+    'rel' => ['welpodron.core.templater'],
 ]);
 
 //! ОБЯЗАТЕЛЬНО 

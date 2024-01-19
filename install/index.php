@@ -8,16 +8,23 @@ use Bitrix\Main\Config\Option;
 
 class welpodron_basket extends CModule
 {
+    var $MODULE_ID = 'welpodron.basket';
+
     private $DEFAULT_OPTIONS = [];
 
     public function __construct()
     {
         $this->MODULE_ID = 'welpodron.basket';
-        $this->MODULE_VERSION = '1.0.0';
         $this->MODULE_NAME = 'Модуль для работы с корзиной (welpodron.basket)';
         $this->MODULE_DESCRIPTION = 'Модуль для работы с корзиной';
         $this->PARTNER_NAME = 'Welpodron';
         $this->PARTNER_URI = 'https://github.com/Welpodron';
+
+        $arModuleVersion = [];
+        include(__DIR__ . "/version.php");
+
+        $this->MODULE_VERSION = $arModuleVersion["VERSION"];
+        $this->MODULE_VERSION_DATE = $arModuleVersion["VERSION_DATE"];
 
         $this->DEFAULT_OPTIONS = [
             'USE_SUCCESS_CONTENT' => 'Y',
@@ -34,8 +41,8 @@ class welpodron_basket extends CModule
         global $APPLICATION;
 
         try {
-            if (!CopyDirFiles(__DIR__ . '/js/', Application::getDocumentRoot() . '/bitrix/js', true, true)) {
-                $APPLICATION->ThrowException('Не удалось скопировать js');
+            if (!CopyDirFiles(__DIR__ . '/packages/', Application::getDocumentRoot() . '/local/packages', true, true)) {
+                $APPLICATION->ThrowException('Не удалось скопировать используемый модулем пакет');
                 return false;
             };
         } catch (\Throwable $th) {
@@ -48,7 +55,7 @@ class welpodron_basket extends CModule
 
     public function UnInstallFiles()
     {
-        Directory::deleteDirectory(Application::getDocumentRoot() . '/bitrix/js/' . $this->MODULE_ID);
+        Directory::deleteDirectory(Application::getDocumentRoot() . '/local/packages/' . $this->MODULE_ID);
     }
 
     public function InstallOptions()
@@ -71,9 +78,7 @@ class welpodron_basket extends CModule
         global $APPLICATION;
 
         try {
-            foreach ($this->DEFAULT_OPTIONS as $optionName => $optionValue) {
-                Option::delete($this->MODULE_ID, ['name' => $optionName]);
-            }
+            Option::delete($this->MODULE_ID);
         } catch (\Throwable $th) {
             $APPLICATION->ThrowException($th->getMessage() . '\n' . $th->getTraceAsString());
             return false;

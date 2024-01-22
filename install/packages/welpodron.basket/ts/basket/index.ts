@@ -193,6 +193,10 @@ class Basket {
       } else {
         responseData = bitrixResponse.data;
 
+        if ((window as any).BX && (window as any).BX.onCustomEvent) {
+          (window as any).BX.onCustomEvent('OnBasketChange');
+        }
+
         if (responseData.HTML != null) {
           if (event && event?.target) {
             const target = (event.target as Element).closest(
